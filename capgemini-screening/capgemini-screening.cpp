@@ -1,15 +1,11 @@
 ﻿#include <iostream>
 #include <vector>
 #include <string.h>
+#include <map>
+#include <algorithm>
 
 #include "phone.h"
 
-//void addPhone(std::vector<Phone> _phoneDatabase, std::string _brandName, std::string _modelName, std::string _formFactor, unsigned int _yearOfIssue, float _screenSize, float _price) {
-//	
-//	Phone* newPhone = new Phone(_brandName, _modelName, _formFactor, _yearOfIssue, _screenSize, _price);
-//	//_phoneDatabase.push_back(newPhone);
-//
-//}
 struct tmpPhoneData
 {
 	std::string tmpBrandName = "";
@@ -81,7 +77,20 @@ void showByFormFactorAndScreenSize(std::vector<Phone*> phoneDatabase, std::strin
 		}
 	}
 }
-void showPopularBrand() {
+void showPopularBrand(std::vector<Phone*> phoneDatabase) {
+	std::map<std::string, int> countMap;
+	for (auto& elem : phoneDatabase)
+	{
+		auto result = countMap.insert(std::pair<std::string, int>(elem->getBrandName(), 1));
+		if (result.second == false)
+			result.first->second++;
+	}
+	int max = 0;
+	auto popularBrand = std::max_element(countMap.begin(), countMap.end(), [](const auto& x, const auto& y) {
+		return x.second < y.second;
+		});
+	std::cout << "Popular brand: " << popularBrand->first << ", number of phones: " << popularBrand->second << "\n";
+	
 
 }
 void showPopularScreenSize() {
@@ -95,7 +104,6 @@ void interface(std::vector<Phone*> phoneDatabase) {
 	std::string formFactor;
 	float screenSize;
 
-	
 	while(true){
 		std::cout << "Choose action : \n1. Add phone\n2. Delete phone\n3. See reports\n4. Exit\nOption: ";
 		std::cin >> switch_on;
@@ -128,7 +136,7 @@ void interface(std::vector<Phone*> phoneDatabase) {
 			showDatabase(phoneDatabase);
 			break;
 		case 3:
-			std::cout << "Choose report:\n1. Show all phones by the same brand\n2. Show all phones of a given form factor and screen size\n 3. Show the name of the brand with the maximum quantity of the phones\n 4. Show TOP-3 screen sizes";
+			std::cout << "Choose report:\n1. Show all phones by the same brand\n2. Show all phones of a given form factor and screen size\n3. Show the name of the brand with the maximum quantity of the phones\n4. Show TOP-3 screen sizes";
 			std::cin >> switch_on;
 			switch (switch_on)
 			{
@@ -145,7 +153,12 @@ void interface(std::vector<Phone*> phoneDatabase) {
 				showByFormFactorAndScreenSize(phoneDatabase, formFactor, screenSize);
 				break;
 			case 3:
+				//std::cout << "Not implemented";
+				showPopularBrand(phoneDatabase);
+				break;
 			case 4:
+				std::cout << "Not implemented";
+				break;
 			default:
 				std::cout << "Wrong option!\n";
 				break;
@@ -159,6 +172,7 @@ void interface(std::vector<Phone*> phoneDatabase) {
 			break;
 
 		default:
+			std::cout << "Wrong option!\n";
 			break;
 		}
 	}
@@ -166,15 +180,8 @@ void interface(std::vector<Phone*> phoneDatabase) {
 
 int main()
 {
-    std::cout << "Hello World!\n";
-	
-	
-	
 	std::vector<Phone*> phoneDatabase;
 	interface(phoneDatabase);
-
-	
-	
 
 }
 
